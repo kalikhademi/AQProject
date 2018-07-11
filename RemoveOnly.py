@@ -16,17 +16,18 @@ def RemoveOnly(data,k):
     k_prime = (k + 1)/2;
     
     S = data; 
+    #pdb.set_trace();
     ncolumns = len(S[1]) - 1;
     
     num_removes = 0; #counts number of samples removed 
-    temp = S[:,0:ncolumns-1]; #dataset without column labelling glass type
+    temp = S[:,0:ncolumns]; #dataset without column labelling glass type
     
     i = 0; #variable to control while loop
     
-    while i < len(temp): #loop based on size of temp
+    while i < len(temp) - 1: #loop based on size of temp
     
         print('i: ', i)
-        temp = S[:,0:ncolumns-1];
+        temp = S[:,0:ncolumns];
         temp = np.delete(temp,i,0);
         
         #finding k nearest neighbors for each sample in training data
@@ -35,7 +36,7 @@ def RemoveOnly(data,k):
         
         count_nlabels = 0;
         temp_indices = indices[i,:];
-        
+        #pdb.set_trace();
         for j in range(0,len(temp_indices)):
             index = indices[i,j]; #
             if(S[index,ncolumns] == S[i,ncolumns]):

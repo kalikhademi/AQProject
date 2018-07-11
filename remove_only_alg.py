@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 """
-Filename:   remove_only_alg.py
-Date:       08 July 2018
-Authors:    Joshua Peeples & Diandra Prioleau
+@filename:   remove_only_alg.py
+@date:       08 July 2018
+@authors:    Joshua Peeples & Diandra Prioleau
 """
 import csv
 import numpy as np
 import pdb 
+import os
 from sklearn.neighbors import NearestNeighbors
 
 #Reads in glass identification from file 
@@ -59,5 +60,18 @@ while i < len(temp): #loop based on size of temp
         
         print('i after: ', i)
 
-        
+#Create directory to save data for each new trial
+path = os.getcwd();
+
+#append trial number 
+trial_num = 1;
+path = path + '\\Trial' + str(trial_num);
+
+#make directory 
+if not os.path.exists(path):
+    os.makedirs(path);
+
+#output data remaining after executing RemoveOnly algorithm 
+np.savetxt(path + '\\' + 'remove_only_data.csv', S, delimiter=",");
+
 

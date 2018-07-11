@@ -19,8 +19,9 @@ x = list(reader);
 data = np.array(x).astype('float');
 print(data.shape);
 
-k = 10; #10-fold cross validation 
-kf = KFold(n_splits=k, random_state=None, shuffle=True);
+k_cv = 10; #10-fold cross validation 
+k = 3; #3 nearest neighbors
+kf = KFold(n_splits=k_cv, random_state=None, shuffle=True);
 
 #Conduct RemoveOnly
 remove_only = True;
