@@ -25,7 +25,7 @@ data = np.array(x).astype('float');
 print(data.shape);
 
 #Percentange of data to select randomly
-percent = .5
+percent = .8
 numTrials = 4
 trial_ID = []
 trial_data = []
@@ -47,11 +47,15 @@ for i in range(numTrials):
     if not os.path.exists(path):
         os.makedirs(path)
         
-    #Write training and test data to file 
-    np.savetxt(path + '\\' + '\\Sub_select_Trial' + str(i+1) + '_Percent_' + str(percent*100) + '.csv', X_train, delimiter=",")
     #Get unique ID and add one
     Unique_ID = np.add(X_train[:,0],1)
-
+      
+    #Replace unique ID colunm of training data
+    X_train[:,0] = Unique_ID;
+    
+    #Write training and test data to file 
+    np.savetxt(path + '\\' + '\\Sub_select_Trial' + str(i+1) + '_Percent_' + str(percent*100) + '.csv', X_train, delimiter=",")
+    
     #Remove unique ID and only have features/labels
     X_train = np.delete(X_train,np.s_[0],axis=1)
     
