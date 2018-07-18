@@ -13,8 +13,8 @@ import pdb
 import os
 from RemoveOnly import RemoveOnly
 
-#Reads in glass identification from file 
-filename = 'C:\\Users\\Diandra\\Documents\\HXR Lab\\AQ Project\\Experiment\Original Datasets\\glass_id_original.csv';
+#Reads in glass identification from file - file should be training data from random generation
+filename = 'C:\\Users\\Diandra\\Documents\\HXR Lab\\AQ Project\\Experiment\Original Datasets\\glass_id_original.csv'; 
 raw_data = open(filename, 'rt');
 reader = csv.reader(raw_data, delimiter=',',quoting=csv.QUOTE_NONE);
 x = list(reader);
@@ -78,10 +78,10 @@ for i in range(0,num_trials):
         knn.fit(remove_only_data[:,0:ncolumns], remove_only_data[:,ncolumns]);
         
         # predict the response
-        pred = knn.predict(data_test[:,0:ncolumns])
+        pred = knn.predict(data_test[:,0:ncolumns]) #remember to change and use with 30% from random generation
         
         # evaluate accuracy
-        score = accuracy_score(data_test[:,ncolumns], pred);
+        score = accuracy_score(data_test[:,ncolumns], pred); #remember to change and use with 30% from random generation
         print(score)
         cv_scores.append(score)  
          
