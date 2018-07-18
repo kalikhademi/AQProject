@@ -23,12 +23,13 @@ def RemoveOnly(data,k):
     temp = S[:,0:ncolumns]; #dataset without column labelling glass type
     
     i = 0; #variable to control while loop
-    
-    while i < len(temp) - 1: #loop based on size of temp
+    print('temp:',len(temp));
+    enter = 0;
+    while i < len(S) : #loop based on size of temp
     
         print('i: ', i)
         temp = S[:,0:ncolumns];
-        temp = np.delete(temp,i,0);
+        #temp = np.delete(temp,i,0);
         
         #finding k nearest neighbors for each sample in training data
         nbrs = NearestNeighbors(n_neighbors=k, algorithm='brute').fit(temp) 
@@ -39,7 +40,8 @@ def RemoveOnly(data,k):
         #pdb.set_trace();
         for j in range(0,len(temp_indices)):
             index = indices[i,j]; #
-            if(S[index,ncolumns] == S[i,ncolumns]):
+            enter += 1;
+            if(S[index,ncolumns] == S[i,ncolumns] and index != i):
                 count_nlabels += 1;
         
         print(count_nlabels)
@@ -54,6 +56,9 @@ def RemoveOnly(data,k):
             
             print('i after: ', i)
     
+        print('temp:',len(temp));
+        print('length of data:', len(S));
+    print('# of comparison: ',enter)
     #return data remaining after executing RemoveOnly algorithm 
     return S;
     

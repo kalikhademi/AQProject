@@ -6,6 +6,8 @@
 """
 import numpy as np
 from sklearn.model_selection import KFold
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.metrics import accuracy_score
 import csv
 import pdb
 import os
@@ -24,7 +26,7 @@ k = 3; #3 nearest neighbors
 kf = KFold(n_splits=k_cv, random_state=None, shuffle=True);
 
 #Conduct RemoveOnly
-remove_only = True;
+remove_only = True; #change based on trial 
 
 #output filenames for training and test data
 output_training = 'kfold_output_training';
@@ -43,20 +45,51 @@ path = path + '\\Trial' + str(trial_num);
 if not os.path.exists(path):
     os.makedirs(path);
 
-for train_index, test_index in kf.split(data):
-    print("TRAIN:", train_index, "TEST:", test_index);
-    data_train, data_test = data[train_index], data[test_index]
+trial_scores = [];
+trial_std = [];
+cv_scores = [];
 
-    #Write training and test data to file 
-    np.savetxt(path + '\\' + output_training + str(file_num) + '.csv', data_train, delimiter=",");
-    np.savetxt(path + '\\' + output_test + str(file_num) + '.csv', data_test, delimiter=",");
+num_trials = 10; #change based on preference
+
+for i in range(0,num_trials):
+    for train_index, test_index in kf.split(data):
+        print("TRAIN:", train_index, "TEST:", test_index);
+        data_train, data_test = data[train_index], data[test_index]
     
-   
-    if(remove_only):
-        #Call RemoveOnly function for each training set
-        remove_only_data = RemoveOnly(data_train,k)
+        #Write training and test data to file 
+        np.savetxt(path + '\\' + output_training + str(file_num) + '.csv', data_train, delimiter=",");
+        np.savetxt(path + '\\' + output_test + str(file_num) + '.csv', data_test, delimiter=",");
         
-        #Save data remaining from RemoveOnly 
-        np.savetxt(path + '\\' + 'remove_only' + str(file_num) + '.csv', remove_only_data, delimiter=",");
+       
+        np.random.shuffle(data_train);
+
+        if(remove_only):
+            #Call RemoveOnly function for each training set
+            remove_only_data = RemoveOnly(data_train,k)
+            
+            #Save data remaining from RemoveOnly 
+            np.savetxt(path + '\\' + 'remove_only' + str(file_num) + '.csv', remove_only_data, delimiter=",");
+        
+        ncolumns = len(remove_only_data[1]) - 1;
     
-    file_num += 1;
+        knn = KNeighborsClassifier(n_neighbors=k);
+        
+        # fitting the model
+        knn.fit(remove_only_data[:,0:ncolumns], remove_only_data[:,ncolumns]);
+        
+        # predict the response
+        pred = knn.predict(data_test[:,0:ncolumns])
+        
+        # evaluate accuracy
+        score = accuracy_score(data_test[:,ncolumns], pred);
+        print(score)
+        cv_scores.append(score)  
+         
+        file_num += 1;
+        
+    trial_scores.append(np.asarray(cv_scores).mean());
+    trial_std.append(np.asarray(cv_scores).std());
+
+
+print('Trial Mean:', np.asarray(trial_scores).mean())
+print('Trial Std: ', np.asarray(trial_std).mean())
