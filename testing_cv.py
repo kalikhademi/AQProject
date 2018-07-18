@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 """
-Created on Tue Jul 10 18:48:03 2018
-
-@author: Diandra
+@filename:      testing_cv.py
+@description:   built-in function for conducting k-fold cross validation and classifier 
+@author:           Joshua Peeples & Diandra Prioleau
 """
 # loading libraries
 from sklearn.cross_validation import train_test_split, cross_val_score
@@ -13,6 +13,7 @@ import csv
 import pdb
 import os
 from RemoveOnly import RemoveOnly
+
 
 #Reads in glass identification from file 
 filename = 'C:\\Users\\Diandra\\Documents\\HXR Lab\\AQ Project\\Experiment\Original Datasets\\glass_id_original.csv';
@@ -35,8 +36,10 @@ cv_scores = [];
 for j in range(0,10):
     knn = KNeighborsClassifier(n_neighbors=k)
     #pdb.set_trace();
+    #put back np.random.shuffle(data);
     np.random.shuffle(data);
     #dataset = np.c_[X_train,y_train];
+    #dataset = np.c_[X_train,y_train];#
     dataset = data;
     #pdb.set_trace();
     S = RemoveOnly(dataset,k);
