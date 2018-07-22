@@ -7,6 +7,7 @@ Created on Sun Jul  8 20:01:45 2018
 """
 import csv
 import numpy as np
+from numpy import *
 import pdb 
 import os
 from sklearn.neighbors import NearestNeighbors
@@ -16,12 +17,15 @@ def RemoveOnly(data,k):
     k_prime = (k + 1)/2;
     
     S = data; 
-    #pdb.set_trace();
-    ncolumns = len(S[1]) - 1;
+
+    ncolumns = len(S[1]) - 2;
     
-    num_removes = 0; #counts number of samples removed 
     temp = S[:,0:ncolumns]; #dataset without column labelling glass type
     
+    samples_removed = [ ]; #array of samples removed from original training set 
+    samples_removed = np.empty((0,len(S[1])),float)
+    num_removes = 0; #counts number of samples removed, used as index for samples_removed
+
     i = 0; #variable to control while loop
     print('temp:',len(temp));
     enter = 0;
@@ -29,7 +33,6 @@ def RemoveOnly(data,k):
     
         print('i: ', i)
         temp = S[:,0:ncolumns];
-        #temp = np.delete(temp,i,0);
         
         #finding k nearest neighbors for each sample in training data
         nbrs = NearestNeighbors(n_neighbors=k, algorithm='brute').fit(temp) 
@@ -37,7 +40,7 @@ def RemoveOnly(data,k):
         
         count_nlabels = 0;
         temp_indices = indices[i,:];
-        #pdb.set_trace();
+
         for j in range(0,len(temp_indices)):
             index = indices[i,j]; #
             enter += 1;
@@ -48,6 +51,10 @@ def RemoveOnly(data,k):
         if(count_nlabels < k_prime):
             print('remove');
             print('i before: ', i)
+
+            #append sample before removing for comparison later with AQ outliers
+            samples_removed = np.vstack((samples_removed,S[i,:]))
+            
             #remove sample from training data
             S= np.delete(S,i,0);
             num_removes += 1;
@@ -59,6 +66,27 @@ def RemoveOnly(data,k):
         print('temp:',len(temp));
         print('length of data:', len(S));
     print('# of comparison: ',enter)
-    #return data remaining after executing RemoveOnly algorithm 
+    
+    #move column containing unique IDs to first column 
+    temp_col = samples_removed[:,-1]; 
+    temp_col = temp_col.T;
+
+    samples_removed = np.delete(samples_removed,-1,1);
+    samples_removed = np.c_[temp_col,samples_removed]
+    
+    
+    #Create directory to save data for each new trial
+    path = os.getcwd();
+    
+    #append trial number 
+    path = path + '\\RemovedSamples';
+    
+    #make directory 
+    if not os.path.exists(path):
+        os.makedirs(path);
+    
+    np.savetxt(path + '\\' + 'samples_removed.csv', samples_removed, delimiter=",");
+
+    #return data remaining after executing RemoveOnly algorithm
     return S;
     
