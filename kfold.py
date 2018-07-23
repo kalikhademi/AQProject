@@ -88,7 +88,7 @@ for i in range(0,num_trials):
         print(score)
         print(confusion_matrix(data_test[:,ncolumns], pred))
         print(classification_report(data_test[:,ncolumns], pred))
-
+        print('Accuracy Score: ', accuracy_score(data_test[:,ncolumns], pred))
 
     trial_scores.append(np.asarray(cv_scores).mean());
     trial_std.append(np.asarray(cv_scores).std());
