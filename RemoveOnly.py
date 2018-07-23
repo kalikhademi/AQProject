@@ -18,9 +18,9 @@ def RemoveOnly(data,k):
     
     S = data; 
 
-    ncolumns = len(S[1]) - 2;
+    ncolumns = len(S[1]) - 1;
     
-    temp = S[:,0:ncolumns]; #dataset without column labelling glass type
+    temp = S[:,1:ncolumns]; #dataset without column labelling glass type
     
     samples_removed = [ ]; #array of samples removed from original training set 
     samples_removed = np.empty((0,len(S[1])),float)
@@ -32,7 +32,7 @@ def RemoveOnly(data,k):
     while i < len(S) : #loop based on size of temp
     
         print('i: ', i)
-        temp = S[:,0:ncolumns];
+        temp = S[:,1:ncolumns];
         
         #finding k nearest neighbors for each sample in training data
         nbrs = NearestNeighbors(n_neighbors=k, algorithm='brute').fit(temp) 
@@ -67,12 +67,7 @@ def RemoveOnly(data,k):
         print('length of data:', len(S));
     print('# of comparison: ',enter)
     
-    #move column containing unique IDs to first column 
-    temp_col = samples_removed[:,-1]; 
-    temp_col = temp_col.T;
-
-    samples_removed = np.delete(samples_removed,-1,1);
-    samples_removed = np.c_[temp_col,samples_removed]
+    
     
     
     #Create directory to save data for each new trial
