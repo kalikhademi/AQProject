@@ -6,7 +6,7 @@ Created on Sun Jul 22 17:56:11 2018
 @author: princesslyons
 """
 
-from sklearn.metrics import classification_report, confusion_matrix, 
+from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
 
 
 def AQeval(true, predicted):
