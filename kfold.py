@@ -8,10 +8,28 @@ import numpy as np
 from sklearn.model_selection import KFold
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.metrics import accuracy_score
+from AQeval import AQeval
 import csv
 import pdb
 import os
 from RemoveOnly import RemoveOnly
+
+#kNN classification
+def Classifier(k,train_data,test_data):
+    
+    #pdb.set_trace();
+    ncolumns = len(train_data[1]) - 1;
+    
+    #kNN Classifier 
+    knn = KNeighborsClassifier(n_neighbors=k);
+            
+    #fitting the model
+    knn.fit(train_data[:,1:ncolumns], train_data[:,ncolumns]);
+            
+    #predict the response
+    pred = knn.predict(test_data[:,1:ncolumns]) ;
+    
+    return pred;
 
 #Reads in glass identification from file 
 filename = 'C:\\Users\\Diandra\\Documents\\HXR Lab\\AQ Project\\Experiment\Original Datasets\\glass_id_original.csv';
@@ -50,6 +68,7 @@ trial_std = [];
 cv_scores = [];
 
 num_trials = 1; #change based on preference
+count = 0;
 
 for i in range(0,num_trials):
     for train_index, test_index in kf.split(data):
@@ -64,29 +83,39 @@ for i in range(0,num_trials):
         #np.random.shuffle(data_train);
 
         if(remove_only):
-            #Call RemoveOnly function for each training set
-            remove_only_data = RemoveOnly(data_train,k)
+                #Call RemoveOnly function for each training set
+                remove_only_data = RemoveOnly(data_train,k);
+                
+                ncolumns = len(remove_only_data[1]) - 1;
+                
+                pred = Classifier(k,remove_only_data,data_test);
+     
+                # evaluate accuracy
+                AQeval(data_test[:,-1],Classifier(k,remove_only_data,data_test));
+                
+                score = accuracy_score(data_test[:,ncolumns], pred);
+                print(score)
+                cv_scores.append(score)  
+                
+                #Save data remaining from RemoveOnly 
+                np.savetxt(path + '\\' + 'remove_only' + str(file_num) + '.csv', remove_only_data, delimiter=",");
             
-            #Save data remaining from RemoveOnly 
-            np.savetxt(path + '\\' + 'remove_only' + str(file_num) + '.csv', remove_only_data, delimiter=",");
-        
-        ncolumns = len(remove_only_data[1]) - 1;
-    
-        knn = KNeighborsClassifier(n_neighbors=k);
-        
-        # fitting the model
-        knn.fit(remove_only_data[:,1:ncolumns], remove_only_data[:,ncolumns]);
-        
-        # predict the response
-        pred = knn.predict(data_test[:,1:ncolumns]) #remember to change and use with 30% from random generation
-        
-        # evaluate accuracy
-        score = accuracy_score(data_test[:,ncolumns], pred);
-        print(score)
-        cv_scores.append(score)  
+        else:
+                
+            pred = Classifier(k,data_train,data_test);
+            
+            
+            ncolumns = len(data_train[1]) - 1;
+                
+            AQeval(data_test[:,-1],Classifier(k,data_train,data_test)); 
+                
+            # evaluate accuracy
+            score = accuracy_score(data_test[:,ncolumns], pred);
+            print(score)
+            cv_scores.append(score)  
          
         file_num += 1;
-        
+                
     trial_scores.append(np.asarray(cv_scores).mean());
     trial_std.append(np.asarray(cv_scores).std());
 
