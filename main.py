@@ -50,13 +50,13 @@ numTrials = 4;
 k_neighbors = 3;
 
 #Import AQ dataset
-AQ_50 = ImportData(os.path.join(os.path.dirname(__file__), 'data_files/recommended-applications_50.csv'))
+AQ_50 = ImportData(os.path.join(os.path.dirname(__file__), 'data_files/recommended-applications_50.csv')) # Relative Paths
 AQ_80 = ImportData(os.path.join(os.path.dirname(__file__), 'data_files/recommended-applications_80.csv'))
 
 
 #TODO: Random 70-30 (training/test) split on dataset - ask Armisha for function that calls random generator
 #will be removed later
-train_data = ImportData(os.path.join(os.path.dirname(__file__), 'data_files/glass_id_train.csv'))
+train_data = ImportData(os.path.join(os.path.dirname(__file__), 'data_files/glass_id_train.csv')) # Relative Paths
 test_data = ImportData(os.path.join(os.path.dirname(__file__), 'data_files/glass_id_test.csv'))
 
 #Call SubSelect - returns percentage of training set
