@@ -31,7 +31,7 @@ def SubSelect(percentage,numTrials,data):
     
     for i in range(numTrials):
         # split into train and test
-        X_train, X_test, y_train, y_test = train_test_split(data, data[:,ncolumns], test_size=(1-percent));
+        X_train, X_test, y_train, y_test = train_test_split(data, data[:,ncolumns], test_size=(1-percent),random_state = 126);
         
         #Save out to Excel
         #make directory 
